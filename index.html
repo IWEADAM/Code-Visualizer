@@ -21,11 +21,11 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/src/index.css" />
+    <link rel="stylesheet" href="style.css" />
   </head>
-  <body class="bg-[#0e0f12] text-[#e8eaed] antialiased selection:bg-blue-500/30 selection:text-blue-200 overflow-hidden">
+  <body class="bg-[#0e0f12] text-[#e8eaed] overflow-hidden">
     <div id="app" class="flex flex-col h-screen w-screen bg-[#0e0f12] text-[#e8eaed] overflow-hidden">
-      <!-- Top Bar Contract: Zone 1 (Brand) — Zone 2 (Navigation Links) — Zone 3 (Primary Actions) -->
+      <!-- Top Bar Contract: Zone 1 (Brand) — Zone 2 (Navigation Links) — Zone 3 (Primary Action) -->
       <header class="flex items-center justify-between gap-6 px-5 py-3 bg-[#111216] border-b border-white/[0.08] shrink-0 z-30">
         <a
           href="#top"
@@ -37,7 +37,7 @@
 
         <nav
           aria-label="Primary Workspace Views"
-          class="hidden md:flex items-center gap-6 text-xs font-medium text-zinc-400"
+          class="flex items-center gap-6 text-xs font-medium text-zinc-400"
         >
           <button
             type="button"
@@ -86,13 +86,6 @@
         <div class="flex items-center gap-2.5 shrink-0">
           <button
             type="button"
-            id="cloud-auth-btn"
-            class="px-3 py-1.5 text-xs font-medium text-zinc-300 hover:text-white bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 rounded-full transition-colors whitespace-nowrap shrink-0"
-          >
-            Cloud Sync (Sign In)
-          </button>
-          <button
-            type="button"
             id="header-import-btn"
             class="px-3.5 py-1.5 text-xs font-medium text-blue-200 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-400/30 rounded-full transition-colors whitespace-nowrap shrink-0 flex items-center gap-1.5"
           >
@@ -101,7 +94,7 @@
         </div>
       </header>
 
-      <!-- Empty / Welcome State (shown when no project is loaded and not viewing History) -->
+      <!-- Empty / Welcome State -->
       <main id="empty-workspace" class="flex-1 flex items-center justify-center p-6 bg-[#0e0f12]">
         <div class="text-center max-w-md space-y-4 animate-fade-in">
           <p class="text-sm text-zinc-400">No repository or source files loaded yet.</p>
@@ -124,14 +117,14 @@
         </div>
       </main>
 
-      <!-- Dedicated History Tab View (can be opened anytime from Top Bar or Empty State) -->
+      <!-- Dedicated History Tab View -->
       <main id="history-workspace" class="hidden flex-1 overflow-y-auto p-6 bg-[#0e0f12] animate-fade-in">
         <div class="max-w-5xl mx-auto space-y-6">
           <div class="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.08] pb-4">
             <div>
               <h1 class="text-xl font-semibold text-white">Saved Repository History</h1>
               <p class="text-xs text-zinc-400 mt-1">
-                Repositories you fetched from GitHub, uploaded, or analyzed are automatically stored in the database so you can reload their visual execution maps anytime.
+                Repositories you fetched from GitHub, uploaded, or analyzed are automatically stored in the SQLite database (repos.db) so you can reload their visual execution maps anytime.
               </p>
             </div>
             <div class="flex items-center gap-2.5">
@@ -139,7 +132,7 @@
                 id="history-storage-badge"
                 class="px-3 py-1 rounded-full text-[11px] font-mono bg-blue-500/10 text-blue-300 border border-blue-400/25"
               >
-                Database: Active
+                SQLite Database: repos.db
               </span>
               <button
                 type="button"
@@ -171,7 +164,7 @@
               <button
                 type="button"
                 id="sidebar-history-btn"
-                class="px-3 py-2 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-medium text-zinc-300 hover:text-white transition-colors"
+                class="px-3 py-2 rounded-full bg-white/[0.05] hover:bg-white/10 border border-white/10 text-xs font-medium text-zinc-300 hover:text-white transition-colors"
                 title="Open Saved Repository History"
               >
                 History
@@ -186,12 +179,12 @@
                   id="global-search-input"
                   placeholder="Search symbols, functions..."
                   aria-label="Global Symbol Search"
-                  class="w-full bg-transparent text-xs text-white placeholder-zinc-500 focus:outline-none"
+                  class="w-full bg-transparent text-xs text-white focus:outline-none"
                 />
               </div>
               <div
                 id="global-search-results"
-                class="hidden mt-1.5 rounded-xl bg-[#1a1c23] border border-white/15 shadow-2xl max-h-64 overflow-y-auto divide-y divide-white/[0.06]"
+                class="hidden mt-1.5 rounded-xl bg-[#1a1c23] border border-white/15 shadow-2xl max-h-64 overflow-y-auto"
               ></div>
             </div>
 
@@ -254,7 +247,7 @@
                 </button>
               </div>
 
-              <div id="kind-filter-group" class="hidden xl:flex items-center bg-[#1a1c22] p-0.5 rounded-lg border border-white/[0.07]">
+              <div id="kind-filter-group" class="flex items-center bg-[#1a1c22] p-0.5 rounded-lg border border-white/[0.07]">
                 <button type="button" data-kind-filter="all" class="kind-filter-btn px-2 py-1 rounded text-[11px] font-medium bg-white/10 text-white">All</button>
                 <button type="button" data-kind-filter="call" class="kind-filter-btn px-2 py-1 rounded text-[11px] font-medium text-zinc-400 hover:text-zinc-200">Calls</button>
                 <button type="button" data-kind-filter="condition" class="kind-filter-btn px-2 py-1 rounded text-[11px] font-medium text-zinc-400 hover:text-zinc-200">Branches</button>
@@ -265,7 +258,6 @@
 
           <!-- Center Canvas Container -->
           <div id="canvas-viewport" class="flex-1 relative overflow-hidden">
-            <!-- SVG Flow Map -->
             <div id="flow-svg-wrapper" class="w-full h-full cursor-grab active:cursor-grabbing">
               <svg
                 id="map-svg"
@@ -275,7 +267,6 @@
               ></svg>
             </div>
 
-            <!-- Alternative HTML Overlays for Architecture / Dependencies / Trace -->
             <div id="alt-map-view" class="hidden w-full h-full overflow-auto p-6"></div>
 
             <!-- Floating Camera Controls -->
@@ -388,7 +379,7 @@
                 id="repo-url-input"
                 type="text"
                 placeholder="Paste a GitHub repository URL (e.g. https://github.com/owner/repository)..."
-                class="w-full bg-transparent text-sm text-white placeholder-zinc-500 focus:outline-none pb-8"
+                class="w-full bg-transparent text-sm text-white focus:outline-none pb-8"
               />
 
               <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-blue-500/15">
@@ -467,7 +458,7 @@
                 rows="7"
                 placeholder="Paste your Python, TypeScript, JavaScript, Java, C++, Go, or Rust code here..."
                 aria-label="Custom source code"
-                class="w-full bg-[#0f1218] border border-blue-400/20 rounded-xl p-3 font-mono text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-blue-400"
+                class="w-full bg-[#0f1218] border border-blue-400/20 rounded-xl p-3 font-mono text-xs text-zinc-100 focus:outline-none focus:border-blue-400"
               ></textarea>
               <div class="flex justify-end">
                 <button
@@ -515,6 +506,6 @@
       </div>
     </div>
 
-    <script type="module" src="/src/app.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>

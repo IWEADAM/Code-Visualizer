@@ -1,23 +1,16 @@
-# CodeAtlas — AI Code Visualization & Execution Map
+# Code Visualizer
 
-"Google Maps for code." Full-stack developer tool that turns source code and Git repositories into an interactive visual control-flow map, cross-file dependency graph, sandboxed execution tracer, and Gemini-powered architecture explorer.
+A full-stack interactive code visualization and execution flow map built with:
+- **Frontend**: Plain HTML (`index.html`), CSS (`style.css`), and Vanilla JavaScript (`app.js`) — no React, no TypeScript, no Vite bundler needed.
+- **Backend**: Python 3 (`app.py`) with built-in **SQLite Database (`repos.db`)** to store and reload previously fetched or uploaded repositories in the **History** tab.
 
-## Quick Start (After Unzipping)
+## How to Run Locally
 
-1. Install dependencies:
+1. Run the Python backend server (uses standard library `http.server` + `sqlite3`, zero `pip install` needed):
    ```bash
-   npm install
+   python app.py
    ```
-2. Configure environment variables:
-   ```bash
-   cp .env.example .env
-   # Add your GEMINI_API_KEY in .env
-   ```
-3. Start the full-stack server (port 3000):
-   ```bash
-   npm run dev
-   ```
-4. Run unit tests:
-   ```bash
-   npx --yes tsx --test src/engine/engine.test.ts
-   ```
+   *(or `python3 app.py` on macOS/Linux)*
+
+2. Open `http://localhost:3000` in your browser.
+   *(You can also open `index.html` directly in any browser; `style.css` and `app.js` work standalone without a build step!)*
