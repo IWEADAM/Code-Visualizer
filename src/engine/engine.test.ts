@@ -1,8 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { detectLanguage, parseSourceFile, searchProject } from './parser';
 import { evaluateSandboxExpression, traceProgramExecution } from './tracer';
 import { SAMPLE_PROJECTS } from './sampleProjects';
+import {
+  saveRepoToHistory,
+  listSavedRepos,
+  getSavedRepoById,
+  deleteSavedRepo,
+} from './historyDb';
 
 test('detectLanguage identifies supported and partial languages accurately', () => {
   assert.deepEqual(detectLanguage('main.py'), { language: 'python', isFullySupported: true });
@@ -93,3 +102,37 @@ test('searchProject finds functions, files, and cross-file call metadata', () =>
   assert.equal(results[0].symbolName, 'authenticate_user()');
   assert.equal(results[0].file, 'src/auth.py');
 });
+
+test('historyDb saves, deduplicates, lists, retrieves, and deletes repositories accurately', () => {
+  const tmpDb = path.join(os.tmpdir(), `test-repo-history-${Date.now()}.json`);
+  try {
+    const saved = saveRepoToHistory(
+      {
+        name: 'owner/demo-repo',
+        description: 'Demo repository for history test',
+        repoUrl: 'https://github.com/owner/demo-repo',
+        files: [{ path: 'src/main.py', content: 'def main():\n    return 42' }],
+      },
+      tmpDb
+    );
+    assert.equal(saved.name, 'owner/demo-repo');
+    assert.equal(saved.language, 'python');
+    assert.equal(saved.fileCount, 1);
+
+    const listed = listSavedRepos(tmpDb);
+    assert.equal(listed.length, 1);
+
+    const fetched = getSavedRepoById(saved.id, tmpDb);
+    assert.ok(fetched);
+    assert.equal(fetched?.name, 'owner/demo-repo');
+
+    const deleted = deleteSavedRepo(saved.id, tmpDb);
+    assert.equal(deleted, true);
+    assert.equal(listSavedRepos(tmpDb).length, 0);
+  } finally {
+    if (fs.existsSync(tmpDb)) {
+      fs.unlinkSync(tmpDb);
+    }
+  }
+});
+

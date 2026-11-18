@@ -1,0 +1,81 @@
+{
+  "entities": {
+    "RepoHistory": {
+      "title": "RepoHistory",
+      "description": "A previously fetched or uploaded code repository saved for quick reloading in Code Visualizer.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "The UID of the authenticated user who saved this repository.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Repository or project name.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "description": {
+          "type": "string",
+          "description": "Repository summary or import source description.",
+          "minLength": 0,
+          "maxLength": 500
+        },
+        "repoUrl": {
+          "type": "string",
+          "description": "Source GitHub URL or upload identifier.",
+          "minLength": 0,
+          "maxLength": 500
+        },
+        "language": {
+          "type": "string",
+          "description": "Primary detected programming language.",
+          "minLength": 1,
+          "maxLength": 60
+        },
+        "fileCount": {
+          "type": "number",
+          "description": "Number of source files in the saved repository."
+        },
+        "filesPayload": {
+          "type": "string",
+          "description": "Serialized source files array (path and content) bounded under 900KB.",
+          "minLength": 2,
+          "maxLength": 900000
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the repository was first saved."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the repository was last accessed or updated."
+        }
+      },
+      "required": [
+        "ownerId",
+        "name",
+        "description",
+        "repoUrl",
+        "language",
+        "fileCount",
+        "filesPayload",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/repoHistory/{repoId}": {
+      "schema": {
+        "$ref": "#/entities/RepoHistory"
+      },
+      "description": "Stores per-user fetched and uploaded repository snapshots for the History tab."
+    }
+  }
+}

@@ -5,6 +5,12 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import JSZip from 'jszip';
+import {
+  listSavedRepos,
+  getSavedRepoById,
+  saveRepoToHistory,
+  deleteSavedRepo,
+} from './src/engine/historyDb';
 
 dotenv.config();
 
@@ -47,7 +53,7 @@ async function startServer() {
         return;
       }
 
-      const prompt = `You are a rigorous static analysis & execution flow tutor for a developer tool called CodeAtlas ("Google Maps for code").
+      const prompt = `You are a rigorous static analysis & execution flow tutor for a developer tool called Code Visualizer ("Google Maps for code").
 Analyze the selected Control-Flow Node strictly based on the provided AST/CFG metadata and source snippet.
 Do NOT hallucinate behavior that is not in the code. Explicitly distinguish what is proven by static analysis, what was observed at runtime, and what is inferred.
 
@@ -159,7 +165,7 @@ ${(fileContent || '').slice(0, 3500)}
         return;
       }
 
-      const prompt = `You are the CodeAtlas Repository Assistant. Answer the developer's question about the loaded repository accurately without hallucinating.
+      const prompt = `You are the Code Visualizer Repository Assistant. Answer the developer's question about the loaded repository accurately without hallucinating.
 Always cite specific file paths, function names, and line numbers (e.g. \`src/auth.py:6\` or \`authenticate_user()\`) so the UI can turn them into clickable map links.
 Explicitly state whether each point is:
 - [Proven by Static Analysis]
@@ -190,7 +196,7 @@ ${question}`;
     }
   });
 
-  // 3. GitHub Repository Importer Endpoint
+  // 3. GitHub Repository Importer Endpoint (auto-saves to database history)
   app.post('/api/repo/import', async (req, res) => {
     try {
       const { repoUrl } = req.body;
@@ -211,7 +217,7 @@ ${question}`;
       const repo = match[2];
 
       const repoMetaResp = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
-        headers: { 'User-Agent': 'CodeAtlas-Studio' },
+        headers: { 'User-Agent': 'CodeVisualizer-Studio' },
       });
       if (!repoMetaResp.ok) {
         res.status(repoMetaResp.status).json({
@@ -227,7 +233,7 @@ ${question}`;
 
       const treeResp = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`,
-        { headers: { 'User-Agent': 'CodeAtlas-Studio' } }
+        { headers: { 'User-Agent': 'CodeVisualizer-Studio' } }
       );
       if (!treeResp.ok) {
         res.status(treeResp.status).json({ error: 'Failed to read repository tree from GitHub.' });
@@ -267,14 +273,80 @@ ${question}`;
         return;
       }
 
-      res.json({
-        name: repo,
+      const savedRecord = saveRepoToHistory({
+        name: `${owner}/${repo}`,
         description: repoMeta.description || `Imported from github.com/${owner}/${repo}`,
         repoUrl,
         files,
       });
+
+      res.json({
+        id: savedRecord.id,
+        name: savedRecord.name,
+        description: savedRecord.description,
+        repoUrl: savedRecord.repoUrl,
+        language: savedRecord.language,
+        files: savedRecord.files,
+        savedRecord,
+      });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Repository import failed';
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  // 4. Repository History Database Endpoints
+  app.get('/api/history', (_req, res) => {
+    try {
+      const repos = listSavedRepos();
+      res.json({ repos });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to list repository history';
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.get('/api/history/:id', (req, res) => {
+    try {
+      const record = getSavedRepoById(req.params.id);
+      if (!record) {
+        res.status(404).json({ error: 'Saved repository not found' });
+        return;
+      }
+      res.json({ repo: record });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to load repository';
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.post('/api/history', (req, res) => {
+    try {
+      const { id, name, description, repoUrl, files } = req.body;
+      if (!name || !Array.isArray(files) || files.length === 0) {
+        res.status(400).json({ error: 'Repository name and non-empty files array are required.' });
+        return;
+      }
+      const savedRecord = saveRepoToHistory({
+        id,
+        name,
+        description,
+        repoUrl,
+        files,
+      });
+      res.json({ repo: savedRecord });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to save repository to history';
+      res.status(500).json({ error: msg });
+    }
+  });
+
+  app.delete('/api/history/:id', (req, res) => {
+    try {
+      const deleted = deleteSavedRepo(req.params.id);
+      res.json({ deleted, id: req.params.id });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to delete repository from history';
       res.status(500).json({ error: msg });
     }
   });
