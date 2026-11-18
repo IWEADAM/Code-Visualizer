@@ -1,0 +1,87 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #0e0f12;
+    color: #e8eaed;
+    letter-spacing: 0.01em;
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Calm blue border & subtle ambient glow for the input area */
+.studio-glow-box {
+  position: relative;
+  background: #14171f;
+  border-radius: 16px;
+  border: 1px solid rgba(59, 130, 246, 0.38);
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.studio-glow-box:focus-within {
+  border-color: rgba(96, 165, 250, 0.7);
+}
+
+.studio-glow-ambient {
+  box-shadow:
+    0 12px 40px -12px rgba(37, 99, 235, 0.22),
+    0 0 24px -6px rgba(59, 130, 246, 0.14);
+}
+
+/* Smooth fade-in animation for Import Repo / Files modal & panels */
+@keyframes fadeInModal {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInModal 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Animated execution flow edges */
+@keyframes flowDash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.animate-flow-edge {
+  stroke-dasharray: 6 6;
+  animation: flowDash 0.65s linear infinite;
+}
+
+/* Custom subtle scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.24);
+}

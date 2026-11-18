@@ -1,0 +1,6 @@
+{
+  "name": "CodeAtlas — AI Code Visualization & Execution Map",
+  "description": "Interactive visual code map, AST/control-flow analyzer, sandboxed execution tracer, and Gemini-powered architecture explorer.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

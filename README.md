@@ -1,11 +1,23 @@
-<div align="center">
+# CodeAtlas — AI Code Visualization & Execution Map
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+"Google Maps for code." Full-stack developer tool that turns source code and Git repositories into an interactive visual control-flow map, cross-file dependency graph, sandboxed execution tracer, and Gemini-powered architecture explorer.
 
-  <h1>Built with AI Studio</h2>
+## Quick Start (After Unzipping)
 
-  <p>The fastest path from prompt to production with Gemini.</p>
-
-  <a href="https://aistudio.google.com/apps">Start building</a>
-
-</div>
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Configure environment variables:
+   ```bash
+   cp .env.example .env
+   # Add your GEMINI_API_KEY in .env
+   ```
+3. Start the full-stack server (port 3000):
+   ```bash
+   npm run dev
+   ```
+4. Run unit tests:
+   ```bash
+   npx --yes tsx --test src/engine/engine.test.ts
+   ```
